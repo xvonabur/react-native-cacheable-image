@@ -23,7 +23,8 @@ class CacheableImage extends React.Component {
         checkNetwork: PropTypes.bool,
         networkAvailable: PropTypes.bool,
         downloadInBackground: PropTypes.bool,
-        storagePermissionGranted: PropTypes.bool
+        storagePermissionGranted: PropTypes.bool,
+        downloadOptions: PropTypes.object
     }
 
     static defaultProps = {
@@ -35,7 +36,8 @@ class CacheableImage extends React.Component {
         checkNetwork: true,
         networkAvailable: false,
         downloadInBackground: (Platform.OS === 'ios') ? false : true,
-        storagePermissionGranted: true
+        storagePermissionGranted: true,
+        downloadOptions: {}
     }
 
     state = {
@@ -128,7 +130,8 @@ class CacheableImage extends React.Component {
                     toFile: filePath,
                     background: this.props.downloadInBackground,
                     begin: this.imageDownloadBegin,
-                    progress: this.imageDownloadProgress
+                    progress: this.imageDownloadProgress,
+                    ...this.props.downloadOptions
                 };
 
                 // directory exists.. begin download
