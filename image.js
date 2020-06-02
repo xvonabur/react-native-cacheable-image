@@ -50,6 +50,8 @@ class CacheableImage extends React.Component {
 
     jobId = null
 
+    unsubscribeNetInfoEvents = () => {}
+
     setNativeProps(nativeProps) {
         if (this._imageComponent) {
             this._imageComponent.setNativeProps(nativeProps);
@@ -257,9 +259,9 @@ class CacheableImage extends React.Component {
 
     componentWillMount() {
         if (this.props.checkNetwork) {
-            NetInfo.isConnected.addEventListener('connectionChange', this._handleConnectivityChange);
+            this.unsubscribeNetInfoEvents = NetInfo.addEventListener(state => this._handleConnectivityChange(state.isConnected));
             // componentWillUnmount unsets this._handleConnectivityChange in case the component unmounts before this fetch resolves
-            NetInfo.isConnected.fetch().done(this._handleConnectivityChange);
+            NetInfo.fetch().then(state => this._handleConnectivityChange(state.isConnected));
         }
 
         this._processSource(this.props.source, true);
@@ -267,7 +269,7 @@ class CacheableImage extends React.Component {
 
     componentWillUnmount() {
         if (this.props.checkNetwork) {
-            NetInfo.isConnected.removeEventListener('connectionChange', this._handleConnectivityChange);
+            this.unsubscribeNetInfoEvents();
             this._handleConnectivityChange = null;
         }
 
