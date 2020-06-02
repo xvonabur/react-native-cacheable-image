@@ -45,11 +45,11 @@ class CacheableImage extends React.Component {
     }
 
     networkAvailable = this.props.networkAvailable
-    
+
     downloading = false
-    
+
     jobId = null
-    
+
     setNativeProps(nativeProps) {
         if (this._imageComponent) {
             this._imageComponent.setNativeProps(nativeProps);
@@ -77,18 +77,18 @@ class CacheableImage extends React.Component {
     checkImageCache = (imageUri, cachePath, cacheKey) => {
         const dirPath = DocumentDirectoryPath+'/'+cachePath;
         const filePath = dirPath+'/'+cacheKey;
-        
+
         RNFS
         .stat(filePath)
         .then((res) => {
             if (res.isFile() && res.size > 0) {
-                // It's possible the component has already unmounted before setState could be called. 
+                // It's possible the component has already unmounted before setState could be called.
                 // It happens when the defaultSource and source have both been cached.
                 // An attempt is made to display the default however it's instantly removed since source is available
-                
+
                 // means file exists, ie, cache-hit
                 this.setState({cacheable: true, cachedImagePath: filePath});
-            } 
+            }
             else {
                 throw Error("CacheableImage: Invalid file in checkImageCache()");
             }
@@ -147,7 +147,7 @@ class CacheableImage extends React.Component {
                             this.setState({cacheable: false, cachedImagePath: null});
                             break;
                         default:
-                            this.setState({cacheable: true, cachedImagePath: filePath});                
+                            this.setState({cacheable: true, cachedImagePath: filePath});
                     }
                 })
                 .catch((err) => {
@@ -180,10 +180,10 @@ class CacheableImage extends React.Component {
             }
         });
     }
-    
+
     _processSource = (source, skipSourceCheck) => {
 
-        if (this.props.storagePermissionGranted 
+        if (this.props.storagePermissionGranted
             && source !== null
             && source != ''
             && typeof source === "object"
@@ -194,12 +194,12 @@ class CacheableImage extends React.Component {
                 (!skipSourceCheck && source != this.props.source)
            )
         )
-        { // remote 
-            
+        { // remote
+
             if (this.jobId) { // sanity
-                this._stopDownload(); 
+                this._stopDownload();
             }
-            
+
             const url = new URL(source.uri, null, true);
 
             // handle query params for cache key
@@ -208,13 +208,13 @@ class CacheableImage extends React.Component {
                 this.props.useQueryParamsInCacheKey.forEach(function(k) {
                     if (url.query.hasOwnProperty(k)) {
                         cacheable = cacheable.concat(url.query[k]);
-                    }    
-                });                
+                    }
+                });
             }
             else if (this.props.useQueryParamsInCacheKey) {
                 cacheable = cacheable.concat(url.query);
             }
-        
+
             const type = url.pathname.replace(/.*\.(.*)/, '$1');
             const cacheKey = SHA1(cacheable) + (type.length < url.pathname.length ? '.' + type : '');
 
@@ -240,7 +240,7 @@ class CacheableImage extends React.Component {
             this._processSource(this.props.source);
         }
     }
-    
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.source != this.props.source || nextProps.networkAvailable != this.networkAvailable) {
             this.networkAvailable = nextProps.networkAvailable;
@@ -254,7 +254,7 @@ class CacheableImage extends React.Component {
         }
         return true;
     }
-    
+
     componentWillMount() {
         if (this.props.checkNetwork) {
             NetInfo.isConnected.addEventListener('connectionChange', this._handleConnectivityChange);
@@ -270,13 +270,13 @@ class CacheableImage extends React.Component {
             NetInfo.isConnected.removeEventListener('connectionChange', this._handleConnectivityChange);
             this._handleConnectivityChange = null;
         }
-    
+
         if (this.downloading && this.jobId) {
             this._stopDownload();
         }
     }
-      
-    render() {        
+
+    render() {
         if ((!this.state.isRemote && !this.props.defaultSource) || !this.props.storagePermissionGranted) {
             return this.renderLocal();
         }
@@ -284,11 +284,11 @@ class CacheableImage extends React.Component {
         if (this.state.cacheable && this.state.cachedImagePath) {
             return this.renderCache();
         }
-        
+
         if (this.props.defaultSource) {
             return this.renderDefaultSource();
         }
-        
+
         const { children, defaultSource, checkNetwork, networkAvailable, downloadInBackground, activityIndicatorProps, ...props } = this.props;
         const style = [activityIndicatorProps.style, this.props.style];
         return (
@@ -315,7 +315,7 @@ class CacheableImage extends React.Component {
     }
 
     renderDefaultSource() {
-        const { children, defaultSource, checkNetwork, networkAvailable, ...props } = this.props;        
+        const { children, defaultSource, checkNetwork, networkAvailable, ...props } = this.props;
         return (
             <CacheableImage {...props} source={defaultSource} checkNetwork={false} networkAvailable={this.networkAvailable} ref={component => this._imageComponent = component}>
             {children}
