@@ -249,7 +249,7 @@ class CacheableImage extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.source != this.props.source || nextProps.networkAvailable != this.networkAvailable) {
             this.networkAvailable = nextProps.networkAvailable;
             this._processSource(nextProps.source);
@@ -263,7 +263,7 @@ class CacheableImage extends React.Component {
         return true;
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         if (this.props.checkNetwork) {
             this.unsubscribeNetInfoEvents = NetInfo.addEventListener(state => this._handleConnectivityChange(state.isConnected));
             // componentWillUnmount unsets this._handleConnectivityChange in case the component unmounts before this fetch resolves
