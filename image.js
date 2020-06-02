@@ -29,9 +29,7 @@ class CacheableImage extends React.Component {
 
     static defaultProps = {
         style: { backgroundColor: 'transparent' },
-        activityIndicatorProps: {
-            style: { backgroundColor: 'transparent', flex: 1 }
-        },
+        activityIndicatorProps: {},
         useQueryParamsInCacheKey: false, // bc
         checkNetwork: true,
         networkAvailable: false,
