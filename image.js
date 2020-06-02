@@ -187,13 +187,16 @@ class CacheableImage extends React.Component {
     }
 
     _processSource = (source, skipSourceCheck) => {
+        const sourceHasUri = source !== null
+           && source !== ''
+           && typeof source === "object"
+           && source.hasOwnProperty('uri')
+        const sourceIsBase64 = sourceHasUri && typeof source.uri === "string" && source.uri.startsWith('data:')
 
         if (this.props.storagePermissionGranted
-            && source !== null
-            && source != ''
-            && typeof source === "object"
-            && source.hasOwnProperty('uri')
-            && (
+           && sourceHasUri
+           && !sourceIsBase64
+           && (
                 skipSourceCheck ||
                 typeof skipSourceCheck === 'undefined' ||
                 (!skipSourceCheck && source != this.props.source)
